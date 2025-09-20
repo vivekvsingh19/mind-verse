@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'screens/main_navigation.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'dart:io' show Platform;
+import 'screens/auth_wrapper.dart';
 import 'web/web_dashboard.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase only on mobile platforms
+  try {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      await Firebase.initializeApp();
+    }
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+    // Continue without Firebase on unsupported platforms
+  }
+  
   runApp(const MentalHealthApp());
 }
 
@@ -13,14 +27,14 @@ class MentalHealthApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MindCare - Digital Mental Health Support',
+      title: 'Mind verse - Digital Mental Health Support',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF009f53), // Testing color #009f53 (green)
+          seedColor: const Color(0xFF055d69), // Deep teal
           brightness: Brightness.light,
-          primary: const Color(0xFF009f53),
-          secondary: const Color(0xFF45B7D1),
+          primary: const Color(0xFF055d69),
+          secondary: const Color(0xFFB2EBF2), // lighter accent
           surface: Colors.white,
           background: const Color(0xFFF8FAFB),
         ),
@@ -38,7 +52,7 @@ class MentalHealthApp extends StatelessWidget {
             fontFamily: 'Inter',
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 2,
           shadowColor: Colors.black.withOpacity(0.05),
           shape: RoundedRectangleBorder(
@@ -48,7 +62,7 @@ class MentalHealthApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF009f53),
+            backgroundColor: const Color(0xFF055d69),
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(
@@ -60,7 +74,7 @@ class MentalHealthApp extends StatelessWidget {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.white,
           elevation: 8,
-          selectedItemColor: Color(0xFF009f53),
+          selectedItemColor: Color(0xFF055d69),
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           selectedLabelStyle: TextStyle(
@@ -83,8 +97,8 @@ class MentalHealthApp extends StatelessWidget {
     if (kIsWeb) {
       return const WebDashboard();
     } else {
-      // Mobile experience
-      return const MainNavigation();
+      // Mobile experience with authentication
+      return const AuthWrapper();
     }
   }
 }

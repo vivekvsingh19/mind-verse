@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({super.key});
@@ -13,20 +14,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   
   List<ChatMessage> messages = [
     ChatMessage(
-      text: "Hello! I'm your MindCare companion. How are you feeling today?",
+      text: "Hello! I'm your MindCare AI companion (Prototype v1.0). I'm here to provide mental health support and coping strategies. How are you feeling today? 🌟\n\n*Note: This is a prototype chatbot for demonstration purposes.*",
       isUser: false,
       timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
     ),
   ];
 
-  final List<String> quickReplies = [
-    "I'm feeling anxious",
-    "I need help sleeping",
-    "I'm feeling overwhelmed",
-    "I want to talk about stress",
-    "I'm feeling lonely",
-    "I need motivation",
+  final List<String> encouragingMessages = [
+    "You're doing great by reaching out! 🌟",
+    "Taking care of your mental health is a sign of strength! 💪",
+    "Every small step counts in your wellness journey! 🌱",
+    "I'm here to support you through this! 🤗",
+    "Your feelings are valid and you matter! 💙",
+    "You're braver than you believe! ✨",
   ];
+
+  String _getRandomEncouragement() {
+    final random = Random();
+    return encouragingMessages[random.nextInt(encouragingMessages.length)];
+  }
 
   void _sendMessage(String text) {
     if (text.trim().isEmpty) return;
@@ -52,22 +58,60 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ));
       });
       _scrollToBottom();
+      
+      // Sometimes send an encouraging follow-up message (prototype feature)
+      // if (Random().nextBool() && Random().nextBool()) { // 25% chance
+      //   Future.delayed(const Duration(milliseconds: 2000), () {
+      //     setState(() {
+      //       messages.add(ChatMessage(
+      //         text: "${_getRandomEncouragement()}\n\n*[Prototype Feature: Random encouragement]*",
+      //         isUser: false,
+      //         timestamp: DateTime.now(),
+      //       ));
+      //     });
+      //     _scrollToBottom();
+      //   });
+      // }
     });
   }
 
   String _generateBotResponse(String userMessage) {
-    if (userMessage.toLowerCase().contains('anxious')) {
-      return "I understand you're feeling anxious. Let's try some breathing exercises. Would you like me to guide you through a 4-7-8 breathing technique?";
-    } else if (userMessage.toLowerCase().contains('sleep')) {
-      return "Sleep is important for mental health. I can share some relaxation techniques or recommend a bedtime routine. What would help you most right now?";
-    } else if (userMessage.toLowerCase().contains('overwhelmed')) {
-      return "When feeling overwhelmed, it helps to break things down. Can you tell me about one specific thing that's bothering you today?";
-    } else if (userMessage.toLowerCase().contains('stress')) {
-      return "Stress is completely normal. Let's work on some coping strategies. Have you tried mindfulness or meditation before?";
-    } else if (userMessage.toLowerCase().contains('lonely')) {
-      return "Feeling lonely can be really difficult. Remember that you're not alone in this journey. Would you like to explore our peer support community?";
-    } else {
-      return "Thank you for sharing that with me. Your feelings are valid. Would you like to explore some coping strategies or talk more about what's on your mind?";
+    String message = userMessage.toLowerCase();
+    
+    // Enhanced responses with prototype indication
+    if (message.contains('anxious') || message.contains('anxiety')) {
+      return "I understand you're feeling anxious. 😌 Let's try some breathing exercises together!\n\n🔹 Try the 4-7-8 technique:\n• Breathe in for 4 counts\n• Hold for 7 counts\n• Exhale for 8 counts\n\nWould you like me to guide you through this or suggest other coping strategies?\n\n*[Prototype Response - In full version, this would include audio guidance]*";
+    } 
+    else if (message.contains('sleep') || message.contains('insomnia') || message.contains("can't sleep")) {
+      return "Sleep issues can really affect your wellbeing. 🌙 Here are some evidence-based tips:\n\n🔹 Create a bedtime routine\n🔹 Avoid screens 1 hour before bed\n🔹 Try progressive muscle relaxation\n🔹 Keep your room cool and dark\n\nWould you like me to guide you through a relaxation exercise?\n\n*[Prototype Response - Full version would include personalized sleep tracking]*";
+    } 
+    else if (message.contains('overwhelmed') || message.contains('stressed') || message.contains('stress')) {
+      return "Feeling overwhelmed is completely valid. 🤗 Let's break this down together:\n\n🔹 What's the most urgent thing on your mind right now?\n🔹 Can we identify just ONE small step you can take today?\n🔹 Remember: You don't have to solve everything at once\n\nWould you like to try a quick grounding exercise (5-4-3-2-1 technique)?\n\n*[Prototype Response - Full version would offer personalized stress management plans]*";
+    } 
+    else if (message.contains('lonely') || message.contains('alone') || message.contains('isolated')) {
+      return "I hear you, and I want you to know that feeling lonely doesn't mean you're alone in this journey. 💙\n\n🔹 Your feelings are completely valid\n🔹 Many people experience loneliness\n🔹 Connection can start with small steps\n\nWould you like to explore our peer support community or try some self-compassion exercises?\n\n*[Prototype Response - Full version would connect you with real support groups]*";
+    } 
+    else if (message.contains('panic') || message.contains('panic attack')) {
+      return "I'm here with you. Let's focus on the present moment. 🧘‍♀️\n\n🔹 BREATHE: Take slow, deep breaths\n🔹 GROUND: Name 5 things you can see, 4 you can touch, 3 you can hear\n🔹 REMIND: This feeling will pass\n\nYou're safe right now. Would you like me to guide you through a grounding exercise?\n\n*[Prototype Response - Full version would include crisis intervention features]*";
+    } 
+    else if (message.contains('yes') && message.contains('please')) {
+      return "Wonderful! I'm glad you're open to coping strategies. 🌟 Here are some techniques I can help you with:\n\n🔹 Deep breathing exercises\n🔹 Mindfulness techniques\n🔹 Progressive muscle relaxation\n🔹 Cognitive reframing\n🔹 Grounding exercises\n\nWhich one interests you most, or would you like me to recommend one based on how you're feeling?\n\n*[Prototype Response - Full version would offer interactive guided sessions]*";
+    } 
+    else if (message.contains('motivation') || message.contains('motivated')) {
+      return "Let's find that spark together! ✨ Here are some motivation boosters:\n\n🔹 Remember your 'why' - what matters most to you?\n🔹 Start small - even 1% progress counts\n🔹 Celebrate tiny wins\n🔹 Be kind to yourself\n\nWhat's one small thing you accomplished today, no matter how minor? Sometimes acknowledging progress helps us find motivation for the next step.\n\n*[Prototype Response - Full version would include personalized goal tracking]*";
+    } 
+    else if (message.contains('sad') || message.contains('depressed') || message.contains('down')) {
+      return "Thank you for sharing that with me. Your feelings matter, and it's okay to not be okay sometimes. 💙\n\n🔹 Sadness is a natural human emotion\n🔹 You're taking a positive step by reaching out\n🔹 Small acts of self-care can help\n\nWould you like to try some gentle mood-lifting activities, or would you prefer to talk more about what's contributing to these feelings?\n\n*[Prototype Response - Full version would include mood tracking and professional referrals]*";
+    } 
+    else if (message.contains('help') || message.contains('support')) {
+      return "I'm here to help! 🤝 As your MindCare companion, I can assist with:\n\n🔹 Coping strategies for stress & anxiety\n🔹 Sleep hygiene tips\n🔹 Mindfulness & breathing exercises\n🔹 Emotional support & validation\n🔹 Crisis resources (when needed)\n\nWhat specific area would you like support with today?\n\n*[Prototype Response - Full version would include professional therapy connections]*";
+    } 
+    else if (message.contains('thank') || message.contains('thanks')) {
+      return "You're so welcome! 😊 It takes courage to reach out and prioritize your mental health. I'm proud of you for taking this step.\n\nIs there anything else you'd like to explore together today?\n\n*[Prototype Response - Your wellbeing journey matters]*";
+    } 
+    else {
+      // Default response with more empathy and options
+      return "Thank you for sharing that with me. Your feelings and experiences are completely valid. 💙\n\nI'm here to support you. Would you like to:\n\n🔹 Try a quick breathing exercise\n🔹 Explore coping strategies\n🔹 Talk through what's on your mind\n🔹 Learn about mindfulness techniques\n\nWhat feels right for you in this moment?\n\n*[Prototype Response - In the full version, I'd have more personalized responses based on your history]*";
     }
   }
 
@@ -95,7 +139,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Chatbot',
+          'AI Chatbot (Prototype)',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -109,56 +153,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         child: Column(
           children: [
             // Chat welcome message
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Hello, I\'m here to help.',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Can I offer you some coping strategies?',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Quick reply buttons as shown in the design
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _buildQuickReplyButton('Yes, please'),
-                      _buildQuickReplyButton('I\'m overwhelmed'),
-                      _buildQuickReplyButton('I can\'t sleep'),
-                      _buildQuickReplyButton('I\'m having a panic attack'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            
             
             // Messages list
             Expanded(

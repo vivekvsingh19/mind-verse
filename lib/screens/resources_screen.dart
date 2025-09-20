@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'breathing_exercise_screen.dart';
+import 'wellness_guide_screen.dart';
+import 'relaxation_audio_screen.dart';
+import 'video_content_screen.dart';
+import 'motivational_stories_screen.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -87,6 +91,33 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       category: 'Depression',
       thumbnail: Icons.psychology,
     ),
+    Resource(
+      title: 'The Power of Small Steps',
+      description: 'Inspiring story about overcoming challenges one step at a time',
+      type: ResourceType.guide,
+      duration: '5 min read',
+      language: 'English',
+      category: 'Motivation',
+      thumbnail: Icons.auto_awesome,
+    ),
+    Resource(
+      title: 'Student Success Stories',
+      description: 'Real stories of students who overcame mental health challenges',
+      type: ResourceType.audio,
+      duration: '10 min',
+      language: 'Hindi',
+      category: 'Motivation',
+      thumbnail: Icons.campaign,
+    ),
+    Resource(
+      title: 'Daily Motivation Quotes',
+      description: 'Uplifting quotes and short stories to brighten your day',
+      type: ResourceType.guide,
+      duration: '3 min read',
+      language: 'English',
+      category: 'Motivation',
+      thumbnail: Icons.format_quote,
+    ),
   ];
 
   List<Resource> get filteredResources {
@@ -122,37 +153,74 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Breathing Exercise Card
-            
-            
+           
             // Wellness Guide Card
             _buildResourceCard(
               title: 'Wellness Guide',
               subtitle: 'Mental health tips and resources',
-              icon: Iconsax.heart,
-              color: const Color(0xFF00898C),// Light blue-teal to match wellness image
+              color: const Color(0xFFE0F7FA), // Very light teal
               imageAsset: 'assets/images/wellness.png',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WellnessGuideScreen(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
-            
+
+             // Motivational Stories Card
+            _buildResourceCard(
+              title: 'Motivational Stories',
+              subtitle: 'Inspiring failure-to-success stories',
+              color: const Color(0xFFFFF3E0), // Very light orange
+              imageAsset: 'assets/images/motivate.png',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MotivationalStoriesScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
             // Relaxation Audio Card
             _buildResourceCard(
               title: 'Relaxation Audio',
               subtitle: 'Calming sounds and meditations',
-              icon: Iconsax.headphone,
-              color: const Color(0xFFF0F8FF), // Light blue background
+              color: const Color(0xFFE3F2FD), // Very light blue
               imageAsset: 'assets/images/music.png',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RelaxationAudioScreen(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
-            
             // Video Content Card
             _buildResourceCard(
               title: 'Video',
               subtitle: 'Visual guides and exercises',
-              icon: Iconsax.play_circle,
-              color: const Color(0xFFF0FFF0), // Light green background
+              color: const Color(0xFFE8F5E9), // Very light green
               imageAsset: 'assets/images/video.png',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const VideoContentScreen(),
+                  ),
+                );
+              },
             ),
+            const SizedBox(height: 16),
+            
+            
           ],
         ),
       ),
@@ -162,7 +230,6 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
   Widget _buildResourceCard({
     required String title,
     required String subtitle,
-    required IconData icon,
     required Color color,
     required String imageAsset,
     VoidCallback? onTap,
@@ -172,23 +239,29 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       child: Container(
         width: double.infinity,
         height: 220,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: color.withOpacity(0.25), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+              color: color.withOpacity(0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
+          gradient: LinearGradient(
+            colors: [color.withOpacity(0.98), color.withOpacity(0.85)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
       child: Row(
         children: [
           // Content side
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -196,26 +269,27 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700,
                       color: Colors.black87,
                       height: 1.3,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
+                      fontSize: 16,
+                      color: Colors.grey[700],
                       height: 1.4,
+                      fontWeight: FontWeight.w500,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
                  
                 ],
               ),
@@ -254,11 +328,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                               color: color.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Icon(
-                              icon,
-                              color: color,
-                              size: 30,
-                            ),
+                            
                           ),
                         );
                       },
@@ -279,11 +349,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                                   color: color.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(30),
                                 ),
-                                child: Icon(
-                                  icon,
-                                  color: color,
-                                  size: 30,
-                                ),
+                                
                               ),
                             );
                           },
@@ -304,16 +370,54 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                                       color: color.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(30),
                                     ),
-                                    child: Icon(
-                                      icon,
-                                      color: color,
-                                      size: 30,
-                                    ),
+                                    
                                   ),
                                 );
                               },
                             )
-                          : Center(
+                          : title == 'Motivational Stories'
+                              ? Image.asset(
+                                  'assets/images/motivate.png',
+                                  width: 140,
+                                  height: 220,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    // Fallback to icon if image fails to load
+                                    return Center(
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: color.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                       
+                                      ),
+                                    );
+                                  },
+                                )
+                              : title == 'Breathing Exercise'
+                                  ? Image.asset(
+                                      'assets/images/relaxation_audio.png',
+                                      width: 140,
+                                      height: 220,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        // Fallback to icon if image fails to load
+                                        return Center(
+                                          child: Container(
+                                            width: 60,
+                                            height: 60,
+                                            decoration: BoxDecoration(
+                                              color: color.withOpacity(0.2),
+                                              borderRadius: BorderRadius.circular(30),
+                                            ),
+                                            
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Center(
                       child: Container(
                         width: 60,
                         height: 60,
@@ -321,11 +425,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                           color: color.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Icon(
-                          icon,
-                          color: color,
-                          size: 30,
-                        ),
+                        
+                        
                       ),
                     ),
             ),

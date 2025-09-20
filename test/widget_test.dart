@@ -7,8 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mind_verse/main.dart';
 
-import 'package:mind verse/main.dart';
+
 
 void main() {
   testWidgets('MindCare app smoke test', (WidgetTester tester) async {

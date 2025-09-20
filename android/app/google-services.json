@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "241201929654",
+    "project_id": "mind-verse",
+    "storage_bucket": "mind-verse.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241201929654:android:fcbb74bbfd55d86711f517",
+        "android_client_info": {
+          "package_name": "com.app.mind_verse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241201929654-khskv3h697tvl3aorkidhgh3s1ujerpd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mind_verse",
+            "certificate_hash": "88153c6679b171325e6da15e2366e7b27fb8eb06"
+          }
+        },
+        {
+          "client_id": "241201929654-gsbg6737m4o0vat88hb0jgks4aotg7jd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAusoO8mvm0qmLfK1hUt24pf-DrRAg5Z3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241201929654-gsbg6737m4o0vat88hb0jgks4aotg7jd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

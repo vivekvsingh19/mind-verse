@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import '../services/gamification_service.dart' as game;
+import '../services/google_auth_service.dart';
+import 'auth_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -34,10 +36,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {
-              // Navigate to settings
-            },
+            icon: const Icon(Iconsax.logout, color: Colors.red),
+            onPressed: _handleLogout,
+            tooltip: 'Sign Out',
           ),
         ],
       ),
@@ -45,9 +46,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Wellness Progress Card
-            _buildWellnessProgressCard(),
-            const SizedBox(height: 16),
+            // User Profile Section
+            _buildUserProfileSection(),
+            const SizedBox(height: 20),
+            
+            
             
             // Badges Section
             _buildBadgesSection(),
@@ -61,51 +64,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildRecentAchievements(),
             const SizedBox(height: 16),
             
-            // Profile Info Card
-            _buildProfileInfoCard(),
+            
+            // Logout Button
+            _buildLogoutButton(),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWellnessProgressCard() {
+  
+  
+
+  Widget _buildUserProfileSection() {
+    // Only get user info if on supported platforms
+    final isFirebaseSupported = GoogleAuthService.isFirebaseAvailable;
+    final userName = isFirebaseSupported 
+        ? (GoogleAuthService.userDisplayName ?? 'Guest User')
+        : 'Guest User';
+    final userEmail = isFirebaseSupported 
+        ? (GoogleAuthService.userEmail ?? 'No email')
+        : 'demo@mindverse.app';
+    final userPhotoURL = isFirebaseSupported 
+        ? GoogleAuthService.userPhotoURL
+        : null;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             Theme.of(context).colorScheme.primary,
             Theme.of(context).colorScheme.primary.withOpacity(0.8),
           ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-            blurRadius: 15,
+            blurRadius: 10,
             offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         children: [
+          // Profile Picture and Basic Info
           Row(
             children: [
               Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: Icon(
-                  Iconsax.user,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 30,
+                child: ClipOval(
+                  child: userPhotoURL != null
+                      ? Image.network(
+                          userPhotoURL,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.white,
+                              child: Icon(
+                                Iconsax.user,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.white,
+                          child: Icon(
+                            Iconsax.user,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 35,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -113,155 +161,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Alex Johnson',
-                      style: TextStyle(
+                    Text(
+                      userName,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
-                      _gamificationService.userRank,
+                      userEmail,
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 16,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _gamificationService.userRank,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Level ${_gamificationService.userLevel}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           
-          // Wellness Points
-          Row(
-            children: [
-              const Icon(
-                Iconsax.star,
-                color: Colors.white,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_gamificationService.wellnessPoints} Wellness Points',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Level Progress
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Progress to Level ${_gamificationService.userLevel + 1}',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    '${_gamificationService.pointsToNextLevel} points to go',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: _gamificationService.levelProgress,
-                backgroundColor: Colors.white.withOpacity(0.3),
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                minHeight: 8,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Current Streak
+          // Quick Stats Row
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Icon(
-                  Iconsax.calendar_tick,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${_gamificationService.currentStreak} Day Streak',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'Best: ${_gamificationService.longestStreak} days',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Keep Going!',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                _buildQuickStat('Level', '${_gamificationService.userLevel}', Iconsax.star),
+                _buildQuickStat('Points', '${_gamificationService.wellnessPoints}', Iconsax.award),
+                _buildQuickStat('Streak', '${_gamificationService.currentStreak}', Iconsax.flash),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuickStat(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          color: Colors.white,
+          size: 24,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 
@@ -647,7 +631,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileInfoCard() {
+
+
+
+  Widget _buildLogoutButton() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -656,58 +643,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Profile Information',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _handleLogout,
+              icon: const Icon(
+                Iconsax.logout,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'Sign Out',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[600],
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          
-          _buildProfileInfoItem(Iconsax.user, 'Name', 'Alex Johnson'),
-          _buildProfileInfoItem(Iconsax.sms, 'Email', 'alex.johnson@example.com'),
-          _buildProfileInfoItem(Iconsax.calendar, 'Member Since', 'January 2024'),
-          _buildProfileInfoItem(Iconsax.location, 'Location', 'New York, USA'),
         ],
       ),
     );
   }
 
-  Widget _buildProfileInfoItem(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Colors.grey[600],
-            size: 20,
+  Future<void> _handleLogout() async {
+    // Show confirmation dialog
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+          title: const Row(
+            children: [
+              Icon(
+                Iconsax.logout,
+                color: Colors.red,
+                size: 24,
+              ),
+              SizedBox(width: 12),
+              Text('Sign Out'),
+            ],
+          ),
+          content: const Text(
+            'Are you sure you want to sign out? You can always sign back in anytime.',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
             ),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[600],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Sign Out'),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
+
+    if (confirmed == true) {
+      try {
+        // Show loading indicator
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Text('Signing out...'),
+                ],
+              ),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // Sign out from Google and Firebase
+        await GoogleAuthService.signOut();
+
+        // Navigate to auth screen
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const AuthScreen()),
+            (route) => false,
+          );
+        }
+      } catch (e) {
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to sign out: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 
   void _showBadgeDetails(game.Badge badge, bool isUnlocked) {
